@@ -44,3 +44,6 @@ This private endpoint is connected to our App/Data plane workspace. It's also ro
 The Private DNS zone is a table that links between URLS and IP addresses. In our setup we have a two URL resolutions
 - Our Workspace URL -> This is routed to our Front End private endpoint IP
 - <region>.pl-auth -> This is routed to our AAD auth private endpoint IP
+
+## App (Data Plane) Network
+This network is for your App workspace.
