@@ -1,23 +1,25 @@
-variable "cidr_transit" {
-  default = "10.10.0.0/16"
+variable "phase_1_state_backend_resource_group_name" {
+  default = "rg-dbx-ml-tfstate"
   type    = string
 }
 
-variable "cidr_dataplane" {
-  default = "10.11.0.0/16"
+
+variable "phase_1_state_backend_storage_account_name" {
+  default = "tfstateb563727617b12739"
   type    = string
 }
 
-variable "cidr_gateway" {
-  default = "10.12.0.0/16"
+
+variable "phase_1_state_backend_container_name" {
+  default = "tfstate"
   type    = string
 }
 
-variable "cidr_vpn_gateway" {
-  default = "10.13.0.0/24"
+
+variable "phase_1_state_backend_key_name" {
+  default = "network.terraform.tfstate"
   type    = string
 }
-
 
 
 variable "rg_transit" {
@@ -30,12 +32,6 @@ variable "rg_dataplane" {
   type    = string
 }
 
-variable "rg_gateway" {
-  default = "rg-dbx-ml-gateway"
-  type    = string
-}
-
-
 variable "location" {
   default = "UKSouth"
   type    = string
@@ -43,6 +39,11 @@ variable "location" {
 
 variable "tenant_id" {
   default = "6d2c78dd-1f85-4ccb-9ae3-cd5ea1cca361"
+  type = string
+}
+
+variable "subscription_id" {
+  default = "972bbe39-991c-4055-80b8-ab36598f89c3"
   type = string
 }
 
@@ -60,7 +61,7 @@ resource "random_string" "naming" {
 }
 
 locals {
-  prefix   = "dbx-mlops"
+  prefix   = "adb"
   dbfsname = join("", ["dbfs", "${random_string.naming.result}"])
   tags = {
     Environment = "Demo"
