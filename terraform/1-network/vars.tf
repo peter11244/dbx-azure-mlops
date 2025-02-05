@@ -37,7 +37,7 @@ variable "rg_gateway" {
 
 
 variable "location" {
-  default = "UKSouth"
+  default = "WestUS2"
   type    = string
 }
 

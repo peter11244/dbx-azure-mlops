@@ -19,7 +19,7 @@ variable "rg_dataplane" {
 }
 
 variable "location" {
-  default = "UKSouth"
+  default = "WestUS2"
   type    = string
 }
 
