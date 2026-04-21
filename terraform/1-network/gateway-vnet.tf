@@ -17,14 +17,14 @@ resource "azurerm_virtual_network" "gateway" {
 
 resource "azurerm_subnet" "gateway" {
   name                 = "GatewaySubnet"
-  resource_group_name = var.rg_gateway
+  resource_group_name  = var.rg_gateway
   virtual_network_name = azurerm_virtual_network.gateway.name
   address_prefixes     = [cidrsubnet(var.cidr_gateway, 8, 0)]
 }
 
 resource "azurerm_subnet" "resolver" {
   name                 = "ResolverSubnet"
-  resource_group_name = var.rg_gateway
+  resource_group_name  = var.rg_gateway
   virtual_network_name = azurerm_virtual_network.gateway.name
   address_prefixes     = [cidrsubnet(var.cidr_gateway, 8, 1)]
 
@@ -62,27 +62,27 @@ resource "azurerm_virtual_network_gateway" "gateway" {
 
   vpn_client_configuration {
     address_space = [var.cidr_vpn_gateway]
-    
-    vpn_client_protocols = [ "OpenVPN" ] # Must use with AAD
-    vpn_auth_types = [ "AAD" ]
-    aad_tenant = "https://login.microsoftonline.com/${var.tenant_id}/"
-    aad_audience = "41b23e61-6c1e-4545-b367-cd054e0ed4b4"
-    aad_issuer = "https://sts.windows.net/${var.tenant_id}/"
-    
-    
+
+    vpn_client_protocols = ["OpenVPN"] # Must use with AAD
+    vpn_auth_types       = ["AAD"]
+    aad_tenant           = "https://login.microsoftonline.com/${var.tenant_id}/"
+    aad_audience         = "41b23e61-6c1e-4545-b367-cd054e0ed4b4"
+    aad_issuer           = "https://sts.windows.net/${var.tenant_id}/"
+
+
   }
 
   custom_route {
-    address_prefixes = [ var.cidr_gateway, var.cidr_transit ]
+    address_prefixes = [var.cidr_gateway, var.cidr_transit]
   }
 
 }
 
 resource "azurerm_private_dns_resolver" "gateway" {
-  name = "pr-vnet-gateway"
+  name                = "pr-vnet-gateway"
   resource_group_name = var.rg_gateway
-  location = var.location
-  virtual_network_id = azurerm_virtual_network.gateway.id
+  location            = var.location
+  virtual_network_id  = azurerm_virtual_network.gateway.id
 }
 
 
@@ -101,7 +101,7 @@ resource "azurerm_virtual_network_peering" "gateway-transit" {
   resource_group_name       = var.rg_gateway
   virtual_network_name      = azurerm_virtual_network.gateway.name
   remote_virtual_network_id = azurerm_virtual_network.transit_vnet.id
-  allow_gateway_transit = true
+  allow_gateway_transit     = true
 }
 
 
@@ -110,13 +110,13 @@ resource "azurerm_virtual_network_peering" "transit-gateway" {
   resource_group_name       = var.rg_transit
   virtual_network_name      = azurerm_virtual_network.transit_vnet.name
   remote_virtual_network_id = azurerm_virtual_network.gateway.id
-  use_remote_gateways = true
-  allow_forwarded_traffic = true
+  use_remote_gateways       = true
+  allow_forwarded_traffic   = true
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "gateway" {
-    name                  = "dnslink-transit-gateway"
-    resource_group_name   = var.rg_transit
-    private_dns_zone_name = azurerm_private_dns_zone.dns_auth_front.name
-    virtual_network_id    = azurerm_virtual_network.gateway.id  
+  name                  = "dnslink-transit-gateway"
+  resource_group_name   = var.rg_transit
+  private_dns_zone_name = azurerm_private_dns_zone.dns_auth_front.name
+  virtual_network_id    = azurerm_virtual_network.gateway.id
 }

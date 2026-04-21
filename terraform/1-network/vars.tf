@@ -43,7 +43,7 @@ variable "location" {
 
 variable "tenant_id" {
   default = "6d2c78dd-1f85-4ccb-9ae3-cd5ea1cca361"
-  type = string
+  type    = string
 }
 
 data "azurerm_client_config" "current" {
