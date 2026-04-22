@@ -27,7 +27,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform init (no backend)
-        run: terraform init -backend=false
+        run: terraform init -backend=false -upgrade
         working-directory: ${{ matrix.stage }}
 
       - name: Terraform validate
