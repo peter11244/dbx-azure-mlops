@@ -1,3 +1,8 @@
+variable "naming_prefix" {
+  type    = string
+  default = "dbx-ml"
+}
+
 variable "subscription_id" {
   type    = string
   default = "972bbe39-991c-4055-80b8-ab36598f89c3"

@@ -2,29 +2,29 @@
 ##  Gateway Network  ##
 #######################
 
-# Create a new resource group for the gateway network. 
+# Create a new resource group for the gateway network.
 # This will contain the virtual network, subnets, and gateway resources.
 # The gateway allows P2S VPN connections to the network, and therefore
-# access to the data plane resources.  
+# access to the data plane resources.
 
 
 resource "azurerm_virtual_network" "gateway" {
-  name                = "vnet-dbx-ml-gateway"
-  resource_group_name = var.rg_gateway
+  name                = "vnet-${var.naming_prefix}-gateway"
+  resource_group_name = local.rg_gateway
   location            = var.location
   address_space       = [var.cidr_gateway]
 }
 
 resource "azurerm_subnet" "gateway" {
   name                 = "GatewaySubnet"
-  resource_group_name  = var.rg_gateway
+  resource_group_name  = local.rg_gateway
   virtual_network_name = azurerm_virtual_network.gateway.name
   address_prefixes     = [cidrsubnet(var.cidr_gateway, 8, 0)]
 }
 
 resource "azurerm_subnet" "resolver" {
   name                 = "ResolverSubnet"
-  resource_group_name  = var.rg_gateway
+  resource_group_name  = local.rg_gateway
   virtual_network_name = azurerm_virtual_network.gateway.name
   address_prefixes     = [cidrsubnet(var.cidr_gateway, 8, 1)]
 
@@ -38,15 +38,15 @@ resource "azurerm_subnet" "resolver" {
 }
 
 resource "azurerm_public_ip" "gateway" {
-  name                = "ip-dbx-ml-gateway"
-  resource_group_name = var.rg_gateway
+  name                = "ip-${var.naming_prefix}-gateway"
+  resource_group_name = local.rg_gateway
   location            = var.location
   allocation_method   = "Static"
 }
 
 resource "azurerm_virtual_network_gateway" "gateway" {
-  name                = "vng-dbx-ml-gateway"
-  resource_group_name = var.rg_gateway
+  name                = "vng-${var.naming_prefix}-gateway"
+  resource_group_name = local.rg_gateway
   location            = var.location
   type                = "Vpn"
   vpn_type            = "RouteBased"
@@ -54,7 +54,7 @@ resource "azurerm_virtual_network_gateway" "gateway" {
   active_active       = false
 
   ip_configuration {
-    name                          = "vng-dbx-ml-gateway-ipconfig"
+    name                          = "vng-${var.naming_prefix}-gateway-ipconfig"
     public_ip_address_id          = azurerm_public_ip.gateway.id
     subnet_id                     = azurerm_subnet.gateway.id
     private_ip_address_allocation = "Dynamic"
@@ -80,7 +80,7 @@ resource "azurerm_virtual_network_gateway" "gateway" {
 
 resource "azurerm_private_dns_resolver" "gateway" {
   name                = "pr-vnet-gateway"
-  resource_group_name = var.rg_gateway
+  resource_group_name = local.rg_gateway
   location            = var.location
   virtual_network_id  = azurerm_virtual_network.gateway.id
 }
@@ -98,7 +98,7 @@ resource "azurerm_private_dns_resolver_inbound_endpoint" "gateway" {
 
 resource "azurerm_virtual_network_peering" "gateway-transit" {
   name                      = "gateway-dbxtransit"
-  resource_group_name       = var.rg_gateway
+  resource_group_name       = local.rg_gateway
   virtual_network_name      = azurerm_virtual_network.gateway.name
   remote_virtual_network_id = azurerm_virtual_network.transit_vnet.id
   allow_gateway_transit     = true
@@ -107,7 +107,7 @@ resource "azurerm_virtual_network_peering" "gateway-transit" {
 
 resource "azurerm_virtual_network_peering" "transit-gateway" {
   name                      = "dbxtransit-gateway"
-  resource_group_name       = var.rg_transit
+  resource_group_name       = local.rg_transit
   virtual_network_name      = azurerm_virtual_network.transit_vnet.name
   remote_virtual_network_id = azurerm_virtual_network.gateway.id
   use_remote_gateways       = true
@@ -116,7 +116,7 @@ resource "azurerm_virtual_network_peering" "transit-gateway" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "gateway" {
   name                  = "dnslink-transit-gateway"
-  resource_group_name   = var.rg_transit
+  resource_group_name   = local.rg_transit
   private_dns_zone_name = azurerm_private_dns_zone.dns_auth_front.name
   virtual_network_id    = azurerm_virtual_network.gateway.id
 }

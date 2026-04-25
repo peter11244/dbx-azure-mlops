@@ -9,7 +9,7 @@
 resource "azurerm_virtual_network" "app_vnet" {
   name                = "${local.prefix}-app-vnet"
   location            = var.location
-  resource_group_name = var.rg_dataplane
+  resource_group_name = local.rg_dataplane
   address_space       = [var.cidr_dataplane]
   tags                = local.tags
 }
@@ -17,7 +17,7 @@ resource "azurerm_virtual_network" "app_vnet" {
 resource "azurerm_network_security_group" "app_sg" {
   name                = "${local.prefix}-app-nsg"
   location            = var.location
-  resource_group_name = var.rg_dataplane
+  resource_group_name = local.rg_dataplane
   tags                = local.tags
 }
 
@@ -31,7 +31,7 @@ resource "azurerm_network_security_rule" "app_aad" {
   destination_port_range      = "443"
   source_address_prefix       = "VirtualNetwork"
   destination_address_prefix  = "AzureActiveDirectory"
-  resource_group_name         = var.rg_dataplane
+  resource_group_name         = local.rg_dataplane
   network_security_group_name = azurerm_network_security_group.app_sg.name
 }
 
@@ -45,7 +45,7 @@ resource "azurerm_network_security_rule" "app_azfrontdoor" {
   destination_port_range      = "443"
   source_address_prefix       = "VirtualNetwork"
   destination_address_prefix  = "AzureFrontDoor.Frontend"
-  resource_group_name         = var.rg_dataplane
+  resource_group_name         = local.rg_dataplane
   network_security_group_name = azurerm_network_security_group.app_sg.name
 }
 
@@ -56,12 +56,12 @@ resource "azurerm_network_security_rule" "app_azfrontdoor" {
 
 resource "azurerm_private_dns_zone" "dnsdpcp" {
   name                = "privatelink.azuredatabricks.net"
-  resource_group_name = var.rg_dataplane
+  resource_group_name = local.rg_dataplane
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "uiapidnszonevnetlink" {
   name                  = "dpcpvnetconnection"
-  resource_group_name   = var.rg_dataplane
+  resource_group_name   = local.rg_dataplane
   private_dns_zone_name = azurerm_private_dns_zone.dnsdpcp.name
   virtual_network_id    = azurerm_virtual_network.app_vnet.id
 }
@@ -72,7 +72,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "uiapidnszonevnetlink" 
 
 resource "azurerm_subnet" "app_public" {
   name                 = "${local.prefix}-app-public"
-  resource_group_name  = var.rg_dataplane
+  resource_group_name  = local.rg_dataplane
   virtual_network_name = azurerm_virtual_network.app_vnet.name
   address_prefixes     = [cidrsubnet(var.cidr_dataplane, 6, 0)]
 
@@ -99,7 +99,7 @@ variable "private_subnet_endpoints" {
 
 resource "azurerm_subnet" "app_private" {
   name                 = "${local.prefix}-app-private"
-  resource_group_name  = var.rg_dataplane
+  resource_group_name  = local.rg_dataplane
   virtual_network_name = azurerm_virtual_network.app_vnet.name
   address_prefixes     = [cidrsubnet(var.cidr_dataplane, 6, 1)]
 
@@ -129,7 +129,7 @@ resource "azurerm_subnet_network_security_group_association" "app_private" {
 resource "azurerm_subnet" "app_plsubnet" {
   # provider                                  = azurerm.app
   name                              = "${local.prefix}-app-privatelink"
-  resource_group_name               = var.rg_dataplane
+  resource_group_name               = local.rg_dataplane
   virtual_network_name              = azurerm_virtual_network.app_vnet.name
   address_prefixes                  = [cidrsubnet(var.cidr_dataplane, 6, 2)]
   private_endpoint_network_policies = "Enabled"
