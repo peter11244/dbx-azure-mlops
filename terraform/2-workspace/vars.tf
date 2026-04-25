@@ -42,6 +42,11 @@ variable "subscription_id" {
   type    = string
 }
 
+variable "environment" {
+  type    = string
+  default = "Demo"
+}
+
 data "azurerm_client_config" "current" {
 }
 
@@ -59,7 +64,7 @@ locals {
   prefix   = var.naming_prefix
   dbfsname = join("", ["dbfs", "${random_string.naming.result}"])
   tags = {
-    Environment = "Demo"
+    Environment = var.environment
     Owner       = lookup(data.external.me.result, "name")
   }
   rg_transit   = "rg-${var.naming_prefix}-transit"

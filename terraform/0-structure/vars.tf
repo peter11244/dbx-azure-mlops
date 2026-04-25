@@ -23,6 +23,11 @@ variable "tfstate_account_replication_type" {
   type    = string
 }
 
+variable "environment" {
+  type    = string
+  default = "Demo"
+}
+
 locals {
   rg_tfstate   = "rg-${var.naming_prefix}-tfstate"
   rg_gateway   = "rg-${var.naming_prefix}-gateway"
