@@ -1,5 +1,17 @@
 # Network
 
+## Deployment
+
+Copy `backend.conf.example` to `backend.conf` and fill in the values for your environment, then initialise Terraform:
+
+```bash
+cp backend.conf.example backend.conf
+terraform init -backend-config=backend.conf
+terraform apply
+```
+
+`backend.conf` is excluded from version control via `.gitignore`.
+
 This stage uses the resource groups in the previous stage and uses them to setup the infrastructure for the network, the network itself is split into 3 parts:
 - Gateway - The gateway network allows users to log on to the platform
 - Transit - The transit network is the way users can access Databricks.

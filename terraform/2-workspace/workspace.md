@@ -1,5 +1,17 @@
 # Workspace Config
 
+## Deployment
+
+Copy `backend.conf.example` to `backend.conf` and fill in the values for your environment, then initialise Terraform:
+
+```bash
+cp backend.conf.example backend.conf
+terraform init -backend-config=backend.conf
+terraform apply
+```
+
+`backend.conf` is excluded from version control via `.gitignore`.
+
 Now we have the networks in place, we can add our Databricks Infrastructure. This stage deploys our 2 databricks workspaces, and the endpoints used to provide access to them. Our main workspace is our "app-workspace" and that is the one our users will connect to. We also have an "auth-workspace" which is a redundant workspace that provides authorization of users and sits in our Transit VNet.
 
 

@@ -1,5 +1,17 @@
 # Databricks Workspace Setup
 
+## Deployment
+
+Copy `backend.conf.example` to `backend.conf` and fill in the values for your environment, then initialise Terraform:
+
+```bash
+cp backend.conf.example backend.conf
+terraform init -backend-config=backend.conf
+terraform apply -var="workspace_url=https://<workspace>.azuredatabricks.net"
+```
+
+`backend.conf` is excluded from version control via `.gitignore`.
+
 This stage of the Terraform Pipeline is to govern the deployment of resources within Databricks itself. This includes things such as clusters, sql warehouses, workspace settings.
 
 Depending on your setup, you may include Unity Catalog objects and permissions within this step, however I would suggest that they are separated out into their own projects (Unity is not tightly tied to an individual workspace.)
