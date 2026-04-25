@@ -1,3 +1,8 @@
+variable "naming_prefix" {
+  type    = string
+  default = "dbx-ml"
+}
+
 variable "cidr_transit" {
   default = "10.10.0.0/16"
   type    = string
@@ -15,23 +20,6 @@ variable "cidr_gateway" {
 
 variable "cidr_vpn_gateway" {
   default = "10.13.0.0/24"
-  type    = string
-}
-
-
-
-variable "rg_transit" {
-  default = "rg-dbx-ml-transit"
-  type    = string
-}
-
-variable "rg_dataplane" {
-  default = "rg-dbx-ml-dataplane"
-  type    = string
-}
-
-variable "rg_gateway" {
-  default = "rg-dbx-ml-gateway"
   type    = string
 }
 
@@ -65,10 +53,13 @@ resource "random_string" "naming" {
 }
 
 locals {
-  prefix   = "dbx-mlops"
+  prefix   = "${var.naming_prefix}ops"
   dbfsname = join("", ["dbfs", "${random_string.naming.result}"])
   tags = {
     Environment = "Demo"
     Owner       = lookup(data.external.me.result, "name")
   }
+  rg_gateway   = "rg-${var.naming_prefix}-gateway"
+  rg_transit   = "rg-${var.naming_prefix}-transit"
+  rg_dataplane = "rg-${var.naming_prefix}-dataplane"
 }

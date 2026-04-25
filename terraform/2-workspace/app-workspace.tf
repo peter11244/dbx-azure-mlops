@@ -1,6 +1,6 @@
 resource "azurerm_databricks_workspace" "app_workspace" {
   name                                  = "${local.prefix}-app-workspace"
-  resource_group_name                   = var.rg_dataplane
+  resource_group_name                   = local.rg_dataplane
   location                              = var.location
   sku                                   = "premium"
   tags                                  = local.tags
@@ -24,7 +24,7 @@ resource "azurerm_databricks_workspace" "app_workspace" {
 
 resource "azurerm_private_endpoint" "app_dpcp" {
   name                = "dpcppvtendpoint"
-  resource_group_name = var.rg_dataplane
+  resource_group_name = local.rg_dataplane
   location            = var.location
   subnet_id           = data.terraform_remote_state.phase1_state.outputs.subnet_app_plsubnet_id
 

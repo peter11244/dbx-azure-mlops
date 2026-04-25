@@ -1,3 +1,8 @@
+variable "naming_prefix" {
+  type    = string
+  default = "dbx-ml"
+}
+
 variable "phase_1_state_backend_resource_group_name" {
   default = "rg-dbx-ml-tfstate"
   type    = string
@@ -21,16 +26,6 @@ variable "phase_1_state_backend_key_name" {
   type    = string
 }
 
-
-variable "rg_transit" {
-  default = "rg-dbx-ml-transit"
-  type    = string
-}
-
-variable "rg_dataplane" {
-  default = "rg-dbx-ml-dataplane"
-  type    = string
-}
 
 variable "location" {
   default = "WestUS2"
@@ -61,10 +56,12 @@ resource "random_string" "naming" {
 }
 
 locals {
-  prefix   = "adb"
+  prefix   = var.naming_prefix
   dbfsname = join("", ["dbfs", "${random_string.naming.result}"])
   tags = {
     Environment = "Demo"
     Owner       = lookup(data.external.me.result, "name")
   }
+  rg_transit   = "rg-${var.naming_prefix}-transit"
+  rg_dataplane = "rg-${var.naming_prefix}-dataplane"
 }

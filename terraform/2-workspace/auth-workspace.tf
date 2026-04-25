@@ -1,7 +1,7 @@
 
 resource "azurerm_databricks_workspace" "web_auth_workspace" {
   name                                  = "${local.prefix}-transit-workspace"
-  resource_group_name                   = var.rg_transit
+  resource_group_name                   = local.rg_transit
   location                              = var.location
   sku                                   = "premium"
   tags                                  = local.tags
@@ -27,7 +27,7 @@ resource "azurerm_databricks_workspace" "web_auth_workspace" {
 resource "azurerm_private_endpoint" "front_pe" {
   name                = "frontprivatendpoint"
   location            = var.location
-  resource_group_name = var.rg_transit
+  resource_group_name = local.rg_transit
   subnet_id           = data.terraform_remote_state.phase1_state.outputs.transit_plsubnet_id
 
   private_service_connection {
@@ -47,7 +47,7 @@ resource "azurerm_private_endpoint" "front_pe" {
 resource "azurerm_private_endpoint" "transit_auth" {
   name                = "aadauthpvtendpoint-transit"
   location            = var.location
-  resource_group_name = var.rg_transit
+  resource_group_name = local.rg_transit
   subnet_id           = data.terraform_remote_state.phase1_state.outputs.transit_plsubnet_id
 
   private_service_connection {
