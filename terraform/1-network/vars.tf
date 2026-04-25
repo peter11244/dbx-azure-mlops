@@ -39,6 +39,11 @@ variable "tenant_id" {
   default = "6d2c78dd-1f85-4ccb-9ae3-cd5ea1cca361"
 }
 
+variable "environment" {
+  type    = string
+  default = "Demo"
+}
+
 data "azurerm_client_config" "current" {
 }
 
@@ -56,7 +61,7 @@ locals {
   prefix   = "${var.naming_prefix}ops"
   dbfsname = join("", ["dbfs", "${random_string.naming.result}"])
   tags = {
-    Environment = "Demo"
+    Environment = var.environment
     Owner       = lookup(data.external.me.result, "name")
   }
   rg_gateway   = "rg-${var.naming_prefix}-gateway"
