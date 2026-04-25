@@ -17,7 +17,8 @@ terraform {
 }
 
 provider "azurerm" {
-  subscription_id = "972bbe39-991c-4055-80b8-ab36598f89c3" # VSES – MPN - Peter Sach
+  subscription_id = var.subscription_id
+  tenant_id       = var.tenant_id
   features {}
 }
 
