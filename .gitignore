@@ -4,6 +4,9 @@
 *.tfvars
 *.tfvars.json
 
+# Per-environment backend config (use backend.conf.example as a template)
+backend.conf
+
 # Crash log files
 crash.log
 
