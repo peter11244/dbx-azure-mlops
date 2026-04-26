@@ -28,6 +28,11 @@ variable "environment" {
   default = "Demo"
 }
 
+variable "monthly_budget_usd" {
+  type    = number
+  default = 100
+}
+
 locals {
   rg_tfstate   = "rg-${var.naming_prefix}-tfstate"
   rg_gateway   = "rg-${var.naming_prefix}-gateway"
