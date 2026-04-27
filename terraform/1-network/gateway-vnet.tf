@@ -38,6 +38,7 @@ resource "azurerm_subnet" "resolver" {
 }
 
 resource "azurerm_public_ip" "gateway" {
+  count               = var.deploy_vpn_gateway ? 1 : 0
   name                = "ip-${var.naming_prefix}-gateway"
   resource_group_name = local.rg_gateway
   location            = var.location
@@ -45,6 +46,7 @@ resource "azurerm_public_ip" "gateway" {
 }
 
 resource "azurerm_virtual_network_gateway" "gateway" {
+  count               = var.deploy_vpn_gateway ? 1 : 0
   name                = "vng-${var.naming_prefix}-gateway"
   resource_group_name = local.rg_gateway
   location            = var.location
@@ -55,7 +57,7 @@ resource "azurerm_virtual_network_gateway" "gateway" {
 
   ip_configuration {
     name                          = "vng-${var.naming_prefix}-gateway-ipconfig"
-    public_ip_address_id          = azurerm_public_ip.gateway.id
+    public_ip_address_id          = azurerm_public_ip.gateway[0].id
     subnet_id                     = azurerm_subnet.gateway.id
     private_ip_address_allocation = "Dynamic"
   }
@@ -101,7 +103,7 @@ resource "azurerm_virtual_network_peering" "gateway-transit" {
   resource_group_name       = local.rg_gateway
   virtual_network_name      = azurerm_virtual_network.gateway.name
   remote_virtual_network_id = azurerm_virtual_network.transit_vnet.id
-  allow_gateway_transit     = true
+  allow_gateway_transit     = var.deploy_vpn_gateway
 }
 
 
@@ -110,7 +112,7 @@ resource "azurerm_virtual_network_peering" "transit-gateway" {
   resource_group_name       = local.rg_transit
   virtual_network_name      = azurerm_virtual_network.transit_vnet.name
   remote_virtual_network_id = azurerm_virtual_network.gateway.id
-  use_remote_gateways       = true
+  use_remote_gateways       = var.deploy_vpn_gateway
   allow_forwarded_traffic   = true
 }
 

@@ -44,6 +44,11 @@ variable "environment" {
   default = "Demo"
 }
 
+variable "deploy_vpn_gateway" {
+  type    = bool
+  default = true
+}
+
 data "azurerm_client_config" "current" {
 }
 
