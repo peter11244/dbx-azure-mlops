@@ -22,6 +22,12 @@ By using this approach we can more easily represent what we might see on a clien
 - You will likely need to set up the other 2 parts of the network. Having an understanding of each will allow you to effectively communicate with a client what is required from each.
 
 
+## Optional Toggles
+
+### `deploy_vpn_gateway` (default: `true`)
+
+Set this variable to `false` to skip deploying the VPN gateway and its public IP. This is intended for customer hub-and-spoke environments where a VPN gateway already exists in a shared connectivity hub — in those cases the P2S gateway in this stage is redundant and would incur unnecessary cost. When the toggle is disabled the VNet peering between the gateway and transit VNets remains in place but `allow_gateway_transit` / `use_remote_gateways` are set to `false`, so no gateway routes are propagated.
+
 ## Gateway Network
 
 Our Gateway network contains only 4 resources, but in a way it is the most complex piece of networking included in this project.
