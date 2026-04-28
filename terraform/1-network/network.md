@@ -28,6 +28,10 @@ By using this approach we can more easily represent what we might see on a clien
 
 Set this variable to `false` to skip deploying the VPN gateway and its public IP. This is intended for customer hub-and-spoke environments where a VPN gateway already exists in a shared connectivity hub — in those cases the P2S gateway in this stage is redundant and would incur unnecessary cost. When the toggle is disabled the VNet peering between the gateway and transit VNets remains in place but `allow_gateway_transit` / `use_remote_gateways` are set to `false`, so no gateway routes are propagated.
 
+### `deploy_private_resolver` (default: `true`)
+
+Set this variable to `false` to skip deploying the Azure Private DNS Resolver (and its inbound endpoint and delegated subnet) in the gateway VNet. In customer environments that already have a DNS infrastructure — such as on-premises DNS servers forwarding to Azure — conditional forwarders on those DNS servers can be configured to point `privatelink.azuredatabricks.net` queries directly at the private DNS zone inbound IP, replacing the resolver entirely. Disabling this toggle avoids deploying a duplicate resolver that would conflict with the existing DNS hierarchy.
+
 ## Gateway Network
 
 Our Gateway network contains only 4 resources, but in a way it is the most complex piece of networking included in this project.

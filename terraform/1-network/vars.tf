@@ -49,6 +49,11 @@ variable "deploy_vpn_gateway" {
   default = true
 }
 
+variable "deploy_private_resolver" {
+  type    = bool
+  default = true
+}
+
 data "azurerm_client_config" "current" {
 }
 

@@ -23,6 +23,7 @@ resource "azurerm_subnet" "gateway" {
 }
 
 resource "azurerm_subnet" "resolver" {
+  count                = var.deploy_private_resolver ? 1 : 0
   name                 = "ResolverSubnet"
   resource_group_name  = local.rg_gateway
   virtual_network_name = azurerm_virtual_network.gateway.name
@@ -81,6 +82,7 @@ resource "azurerm_virtual_network_gateway" "gateway" {
 }
 
 resource "azurerm_private_dns_resolver" "gateway" {
+  count               = var.deploy_private_resolver ? 1 : 0
   name                = "pr-vnet-gateway"
   resource_group_name = local.rg_gateway
   location            = var.location
@@ -89,12 +91,13 @@ resource "azurerm_private_dns_resolver" "gateway" {
 
 
 resource "azurerm_private_dns_resolver_inbound_endpoint" "gateway" {
+  count                   = var.deploy_private_resolver ? 1 : 0
   name                    = "PE_RESOLVER_IB"
-  private_dns_resolver_id = azurerm_private_dns_resolver.gateway.id
+  private_dns_resolver_id = azurerm_private_dns_resolver.gateway[0].id
   location                = var.location
   ip_configurations {
     private_ip_allocation_method = "Dynamic"
-    subnet_id                    = azurerm_subnet.resolver.id
+    subnet_id                    = azurerm_subnet.resolver[0].id
   }
 }
 
