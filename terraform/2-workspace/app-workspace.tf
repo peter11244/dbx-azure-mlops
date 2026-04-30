@@ -17,21 +17,15 @@ module "app_workspace" {
 ## BACKEND PRIVATE ENDPOINT
 ###
 
-resource "azurerm_private_endpoint" "app_dpcp" {
+module "app_dpcp" {
+  source = "../modules/databricks-private-endpoint"
+
   name                = "dpcppvtendpoint"
   resource_group_name = local.rg_dataplane
   location            = var.location
   subnet_id           = data.terraform_remote_state.phase1_state.outputs.subnet_app_plsubnet_id
-
-  private_service_connection {
-    name                           = "ple-${local.prefix}-dpcp"
-    private_connection_resource_id = module.app_workspace.workspace_id
-    is_manual_connection           = false
-    subresource_names              = ["databricks_ui_api"]
-  }
-
-  private_dns_zone_group {
-    name                 = "app-private-dns-zone-dpcp"
-    private_dns_zone_ids = [data.terraform_remote_state.phase1_state.outputs.private_dns_zone_dnsdpcp_id]
-  }
+  workspace_id        = module.app_workspace.workspace_id
+  subresource_name    = "databricks_ui_api"
+  private_dns_zone_id = data.terraform_remote_state.phase1_state.outputs.private_dns_zone_dnsdpcp_id
+  tags                = local.tags
 }
