@@ -1,0 +1,10 @@
+data "terraform_remote_state" "stage2" {
+  backend = "azurerm"
+  config = {
+    resource_group_name  = "rg-dbx-ml-tfstate"
+    storage_account_name = "tfstateb563727617b12739"
+    container_name       = "tfstate"
+    key                  = "workspace.terraform.tfstate"
+    use_azuread_auth     = true
+  }
+}
