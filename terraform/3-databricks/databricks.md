@@ -18,6 +18,23 @@ Depending on your setup, you may include Unity Catalog objects and permissions w
 
 You could also use this to deploy Databricks Workflows and DLT. This is not really best governed by Terraform, and tools such as Databricks Asset Bundles (DABS) work better for application code.
 
+## Cluster Policies and Instance Pools
+
+### Instance Pool (`shared`)
+
+A single shared `Standard_DS3_v2` SPOT-with-fallback pool capped at 10 nodes. Both cluster policies draw from this pool so pre-warmed VMs are shared between interactive and job clusters, reducing cold-start times and cost.
+
+### Cluster Policies
+
+| Policy | Workers | Intended Use |
+|--------|---------|--------------|
+| `single-node` | 0 (local mode) | Exploratory notebooks, light ETL, unit testing — no driver/executor split overhead |
+| `standard` | 1–8 | Multi-node jobs and shared interactive clusters |
+
+Both policies pin `spark_version` to the latest LTS release and enforce a 30-minute autotermination window (configurable between 10 and 120 minutes) so idle clusters shut down automatically.
+
+The policy IDs and pool ID are exported as Terraform outputs for consumption by downstream stages (e.g. DABS bundle configuration).
+
 ### Prerequisites
 This is the first step that includes the Databricks Provider. The Azure is kept in case there is a requirement to deploy storage accounts or similar for use by the workspace as an external location.
 
