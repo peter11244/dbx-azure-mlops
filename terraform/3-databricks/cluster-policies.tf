@@ -5,7 +5,7 @@ resource "databricks_instance_pool" "shared" {
   idle_instance_autotermination_minutes = 10
 
   azure_attributes {
-    availability = "SPOT_WITH_FALLBACK_TO_ON_DEMAND"
+    availability = "SPOT_AZURE"
   }
 
   node_type_id = "Standard_DS3_v2"
