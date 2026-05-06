@@ -22,3 +22,13 @@ variable "environment" {
   type    = string
   default = "Demo"
 }
+
+variable "key_vault_id" {
+  type        = string
+  description = "Resource ID of the Azure Key Vault to back the secret scope"
+}
+
+variable "key_vault_uri" {
+  type        = string
+  description = "Vault URI of the Azure Key Vault"
+}
