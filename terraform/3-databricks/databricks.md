@@ -24,3 +24,18 @@ This is the first step that includes the Databricks Provider. The Azure is kept 
 Before running this stage you will need to do the following:
 - Link your workspace to an established Unity Catalog metastore for your environment
 - Grant permissions to your account within the workspace
+
+## Secret Scope (Azure Key Vault-backed)
+
+`secret-scope.tf` provisions a Databricks secret scope backed by an Azure Key Vault, enabling notebooks and jobs to read secrets from the vault without embedding credentials in code.
+
+The scope is created via Databricks' Azure Key Vault integration (`keyvault_metadata`), which means the vault's secrets are accessed directly — they are not copied into Databricks.
+
+**Variables required:**
+
+| Variable | Description |
+|---|---|
+| `key_vault_id` | Full Azure resource ID of the Key Vault (e.g. `/subscriptions/.../resourceGroups/.../providers/Microsoft.KeyVault/vaults/my-vault`) |
+| `key_vault_uri` | Vault URI (e.g. `https://my-vault.vault.azure.net/`) |
+
+**Prerequisites:** The Key Vault must pre-exist, and the workspace managed identity must be granted the **Key Vault Secrets User** role on the vault before Terraform can create the scope.
