@@ -1,0 +1,36 @@
+bundle:
+  name: batch-etl
+
+variables:
+  workspace_url:
+    description: "URL of the app Databricks workspace (e.g. https://<id>.azuredatabricks.net)"
+  cluster_policy_id:
+    description: "ID of the cluster policy from stage 3 (single_node_policy_id or standard_policy_id)"
+    default: ""
+
+targets:
+  dev:
+    workspace:
+      host: ${var.workspace_url}
+
+resources:
+  jobs:
+    batch_etl_job:
+      name: batch-etl-job
+
+      tasks:
+        - task_key: etl_notebook
+          notebook_task:
+            notebook_path: ./src/etl_notebook.py
+            source: WORKSPACE
+
+          new_cluster:
+            spark_version: "auto:latest-lts"
+            num_workers: 0
+            spark_conf:
+              spark.databricks.cluster.profile: singleNode
+              spark.master: "local[*]"
+            policy_id: ${var.cluster_policy_id}
+            azure_attributes:
+              availability: SPOT_AZURE
+            autotermination_minutes: 30
