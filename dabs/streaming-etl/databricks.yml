@@ -1,0 +1,37 @@
+bundle:
+  name: streaming-etl
+
+variables:
+  workspace_url:
+    description: "URL of the app Databricks workspace (e.g. https://<id>.azuredatabricks.net)"
+  catalog_name:
+    description: "Unity Catalog catalog created by stage 4 Terraform"
+    default: "main"
+  schema_name:
+    description: "Schema (database) inside the catalog where DLT writes tables"
+    default: "default"
+  continuous:
+    description: "true = keep a cluster running permanently; false (default) = triggered mode, runs on demand"
+    default: "false"
+
+targets:
+  dev:
+    workspace:
+      host: ${var.workspace_url}
+
+resources:
+  pipelines:
+    streaming_etl_pipeline:
+      name: streaming-etl-pipeline
+
+      catalog: ${var.catalog_name}
+      target: ${var.schema_name}
+
+      continuous: ${var.continuous}
+
+      libraries:
+        - notebook:
+            path: ./src/dlt_pipeline.py
+
+      configuration:
+        pipelines.enableTrackHistory: "true"
